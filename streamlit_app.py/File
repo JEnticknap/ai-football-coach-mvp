@@ -1,0 +1,33 @@
+### streamlit_app.py
+import streamlit as st
+import os
+from app.detection import PlayerDetector
+from app.utils import extract_frames
+from app.analysis import calculate_heatmap_data, simple_tactical_feedback
+from app.visualizations import generate_heatmap
+
+st.set_page_config(layout="wide")
+st.title("AI Football Coach MVP")
+
+uploaded_file = st.file_uploader("Upload a football video", type=["mp4"])
+
+if uploaded_file:
+    with open(f"data/raw_videos/{uploaded_file.name}", "wb") as f:
+        f.write(uploaded_file.read())
+
+    st.success("Video uploaded successfully!")
+
+    extract_frames(f"data/raw_videos/{uploaded_file.name}", "data/frames")
+
+    detector = PlayerDetector()
+    detections = detector.detect("data/frames")
+
+    heatmap_data = calculate_heatmap_data(detections)
+    heatmap_path = generate_heatmap(heatmap_data, output_path="data/outputs/heatmap.png")
+
+    st.image(heatmap_path, caption="Player Movement Heatmap", use_column_width=True)
+
+    feedback = simple_tactical_feedback(detections)
+    st.subheader("Tactical Feedback")
+    st.write(feedback)
+

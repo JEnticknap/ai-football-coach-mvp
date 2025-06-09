@@ -1,0 +1,5 @@
+### app/tracking.py
+# Dummy tracker for MVP — can replace with ByteTrack later
+class DummyTracker:
+    def track(self, detections):
+        return detections  # Just passes through detections unchanged

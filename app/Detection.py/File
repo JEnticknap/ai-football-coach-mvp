@@ -1,0 +1,18 @@
+### app/detection.py
+from ultralytics import YOLO
+import cv2
+import os
+
+class PlayerDetector:
+    def __init__(self):
+        self.model = YOLO("yolov8n.pt")  # tiny model for speed
+
+    def detect(self, frames_folder):
+        results = []
+        for filename in sorted(os.listdir(frames_folder)):
+            frame_path = os.path.join(frames_folder, filename)
+            frame = cv2.imread(frame_path)
+            res = self.model(frame)[0]
+            players = [det.xyxy[0].tolist() for det in res.boxes if int(det.cls[0]) == 0]
+            results.append((filename, players))
+        return results

@@ -1,0 +1,18 @@
+### app/analysis.py
+def calculate_heatmap_data(detections):
+    coords = []
+    for _, players in detections:
+        for player in players:
+            x_center = (player[0] + player[2]) / 2
+            y_center = (player[1] + player[3]) / 2
+            coords.append((x_center, y_center))
+    return coords
+
+def simple_tactical_feedback(detections):
+    feedback = ""
+    avg_players = sum(len(players) for _, players in detections) / len(detections)
+    if avg_players < 5:
+        feedback += "Players are not grouped well. Consider improving defensive shape."
+    else:
+        feedback += "Player spread seems normal."
+    return feedback

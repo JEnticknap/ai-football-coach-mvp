@@ -1,0 +1,19 @@
+### app/visualizations.py
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+
+def generate_heatmap(coords, output_path="heatmap.png"):
+    x, y = zip(*coords)
+    heatmap, xedges, yedges = np.histogram2d(x, y, bins=(64, 64))
+    heatmap = np.rot90(heatmap)
+    heatmap = np.flipud(heatmap)
+    heatmap = heatmap / np.max(heatmap)
+
+    plt.figure(figsize=(8, 6))
+    plt.imshow(heatmap, cmap="hot", interpolation="nearest")
+    plt.axis("off")
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    plt.savefig(output_path, bbox_inches='tight', pad_inches=0)
+    plt.close()
+    return output_path
